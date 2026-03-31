@@ -157,10 +157,7 @@ func (l *Limiter) Attempt(ctx context.Context, name string, limit Limit) (Attemp
 		return AttemptResult{}, fmt.Errorf("ratelimiter: store hit error: %w", err)
 	}
 
-	remaining := limit.MaxAttempts - int(hits)
-	if remaining < 0 {
-		remaining = 0
-	}
+	remaining := max(limit.MaxAttempts-int(hits), 0)
 
 	if hits > int64(limit.MaxAttempts) {
 		retryAfter, err := l.store.AvailableIn(ctx, key)
