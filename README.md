@@ -1,10 +1,10 @@
 # ratelimiter
 
-A Laravel-inspired rate limiting library for Go. Supports in-memory and Redis storage backends, with first-class middleware for Gin and gorilla/mux (or any `net/http`-compatible router).
+A flexible rate limiting library for Go. Supports in-memory and Redis storage backends, with first-class middleware for Gin and gorilla/mux (or any `net/http`-compatible router).
 
 ## Features
 
-- **Laravel-style API** — `PerMinute`, `PerHour`, `PerDay`, `None`, fluent `.By(key)` and `.Response(fn)` builders
+- **Fluent API** — `PerMinute`, `PerHour`, `PerDay`, `None`, fluent `.By(key)` and `.Response(fn)` builders
 - **Named limiters** — Register reusable rules by name, resolved per-request via a `KeyFunc`
 - **Multiple limits per route** — Combine per-minute + per-hour limits; each tracked independently
 - **Pluggable storage** — In-memory (default) or Redis; implement the `Store` interface for anything else
@@ -47,7 +47,7 @@ func main() {
     // Create a limiter with the default in-memory store.
     limiter := ratelimiter.New()
 
-    // Register a named limiter (just like Laravel's RateLimiter::for).
+    // Register a named limiter.
     limiter.For("api", func(r *http.Request) []ratelimiter.Limit {
         return []ratelimiter.Limit{
             ratelimiter.PerMinute(60).By(r.RemoteAddr),
@@ -182,7 +182,7 @@ ratelimiter.PerMinute(5).By(r.RemoteAddr).Response(func(w http.ResponseWriter, r
 
 ## Named Limiters
 
-Named limiters work like `RateLimiter::for()` in Laravel. Register them once and apply by name to routes.
+Named limiters let you register rules once and apply them by name to routes.
 
 ```go
 // Multiple limits — the per-minute and per-hour counters are tracked independently.
